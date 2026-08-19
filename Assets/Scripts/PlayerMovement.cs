@@ -17,6 +17,9 @@ public class PlayerMovement : MonoBehaviour{
     [SerializeField] Vector2 wallJumpPower = new Vector2(10f, 12f);
     [SerializeField] private Transform wallCP;
     [SerializeField] private float wallCR = 0.2f;
+    [SerializeField] private float wallStickCD = 0.30f;
+    [SerializeField] private float wallJumpLD = 0.2f;
+    [SerializeField] private LayerMask wallLayer;
 
     private Rigidbody2D rb;
     private float horInput;
@@ -26,6 +29,7 @@ public class PlayerMovement : MonoBehaviour{
     private bool isWallSlide;
     private bool isFacingRight = true;
     private bool isWallJump;
+    private bool canWallSlide = true;
 
     private void Awake(){
         rb = GetComponent<Rigidbody2D>();
@@ -40,13 +44,18 @@ public class PlayerMovement : MonoBehaviour{
             else if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed){
                 horInput = 1f;
             }
-            if (horInput > 0 && !isFacingRight)
+            if (!isWallJump)
             {
-                Flip();
-            } else if (horInput < 0 && isFacingRight)
-            {
-                Flip();
+                if (horInput > 0 && !isFacingRight)
+                {
+                    Flip();
+                }
+                else if (horInput < 0 && isFacingRight)
+                {
+                    Flip();
+                }
             }
+            
             if ( (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame)){
                 if (isGround){
                     Jump();
@@ -63,7 +72,7 @@ public class PlayerMovement : MonoBehaviour{
     private void FixedUpdate(){
         isGround = Physics2D.OverlapCircle(groundCP.position, groundCR, groundLayer);
         isTouchWall = Physics2D.OverlapCircle(wallCP.position, wallCR, groundLayer);
-        if (isTouchWall && !isGround && horInput != 0)
+        if (isTouchWall && !isGround && horInput != 0 && canWallSlide)
         {
             isWallSlide = true;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, -wallSlideSpeed, float.MaxValue));
@@ -86,19 +95,24 @@ public class PlayerMovement : MonoBehaviour{
     private void WallJump()
     {
         isWallJump = true;
+        canWallSlide = false;
+
         float jumpDirect = isFacingRight ? -1f : 1f;
         rb.linearVelocity = new Vector2(jumpDirect * wallJumpPower.x, wallJumpPower.y);
 
         Flip();
         Invoke(nameof(StopWallJump), 0.15f);
-
+        Invoke(nameof(ReenableWallSlide), wallStickCD);
     }
 
     private void StopWallJump()
     {
         isWallJump = false;
     }
-
+    private void ReenableWallSlide()
+    {
+        canWallSlide = true;
+    }
     private void Flip()
     {
         isFacingRight = !isFacingRight;
