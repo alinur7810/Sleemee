@@ -521,6 +521,7 @@ GameObject:
   - component: {fileID: 1484853347}
   - component: {fileID: 1484853346}
   - component: {fileID: 1484853345}
+  - component: {fileID: 1484853349}
   m_Layer: 0
   m_Name: slime
   m_TagString: Untagged
@@ -543,7 +544,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -666,6 +667,25 @@ Transform:
   - {fileID: 60696502}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1484853349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484853344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4b0a39ede613b4789520436a0cbc10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  slimeSpeed: 8
+  jumpPower: 12
+  groundCP: {fileID: 60696502}
+  groundCR: 0.2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

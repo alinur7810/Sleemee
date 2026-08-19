@@ -1,3 +1,4 @@
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,9 +12,20 @@ public class PlayerMovement : MonoBehaviour{
     [SerializeField] private float groundCR = 0.2f;
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Wall Check")]
+    [SerializeField] private float wallSlideSpeed = 2f;
+    [SerializeField] Vector2 wallJumpPower = new Vector2(10f, 12f);
+    [SerializeField] private Transform wallCP;
+    [SerializeField] private float wallCR = 0.2f;
+
     private Rigidbody2D rb;
     private float horInput;
     private bool isGround;
+
+    private bool isTouchWall;
+    private bool isWallSlide;
+    private bool isFacingRight = true;
+    private bool isWallJump;
 
     private void Awake(){
         rb = GetComponent<Rigidbody2D>();
@@ -29,23 +41,76 @@ public class PlayerMovement : MonoBehaviour{
                 horInput = 1f;
             }
 
-            if ( (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame) && isGround ){
-                Jump();
+            if ( (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame)){
+                if (isGround){
+                    Jump();
+                }
+                else if (isWallSlide)
+                {
+                    WallJump();
+                }
+                
             }
         }
     }
 
     private void FixedUpdate(){
         isGround = Physics2D.OverlapCircle(groundCP.position, groundCR, groundLayer);
-        rb.linearVelocity = new Vector2(horInput * slimeSpeed, rb.linearVelocity.y);
+        isTouchWall = Physics2D.OverlapCircle(wallCP.position, wallCR, groundLayer);
+        if (isTouchWall && !isGround && horInput != 0)
+        {
+            isWallSlide = true;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, -wallSlideSpeed, float.MaxValue));
+
+        }
+        else
+        {
+            isWallSlide = false;
+        }
+
+        if (!isWallJump)
+        {
+            rb.linearVelocity = new Vector2(horInput * slimeSpeed, rb.linearVelocity.y);
+        }
+        
     }
     private void Jump(){
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
+    }
+    private void WallJump()
+    {
+        isWallJump = true;
+        float jumpDirect = isFacingRight ? -1f : 1f;
+        rb.linearVelocity = new Vector2(jumpDirect * wallJumpPower.x, wallJumpPower.y);
+
+        Flip();
+        Invoke(nameof(StopWallJump), 0.15f);
+
+    }
+
+    private void StopWallJump()
+    {
+        isWallJump = false;
+    }
+
+    private void Flip()
+    {
+        isFacingRight = !isFacingRight;
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1f;
+        transform.localScale = localScale;
     }
     private void OnDrawGizmosSelected(){
         if (groundCP != null){
             Gizmos.color=Color.red;
             Gizmos.DrawWireSphere(groundCP.position, groundCR);
         }
+
+        if (wallCP != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(wallCP.position, wallCR);
+        }
+
     }
 }
