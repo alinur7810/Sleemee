@@ -1,4 +1,3 @@
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -60,7 +59,7 @@ public class PlayerMovement : MonoBehaviour{
                 if (isGround){
                     Jump();
                 }
-                else if (isWallSlide)
+                else if (isTouchWall || isWallSlide)
                 {
                     WallJump();
                 }
@@ -101,7 +100,7 @@ public class PlayerMovement : MonoBehaviour{
         rb.linearVelocity = new Vector2(jumpDirect * wallJumpPower.x, wallJumpPower.y);
 
         Flip();
-        Invoke(nameof(StopWallJump), 0.15f);
+        Invoke(nameof(StopWallJump), wallJumpLD);
         Invoke(nameof(ReenableWallSlide), wallStickCD);
     }
 
