@@ -40,7 +40,13 @@ public class PlayerMovement : MonoBehaviour{
             else if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed){
                 horInput = 1f;
             }
-
+            if (horInput > 0 && !isFacingRight)
+            {
+                Flip();
+            } else if (horInput < 0 && isFacingRight)
+            {
+                Flip();
+            }
             if ( (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame)){
                 if (isGround){
                     Jump();
