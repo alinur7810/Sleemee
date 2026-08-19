@@ -55,15 +55,25 @@ public class PlayerMovement : MonoBehaviour{
                 }
             }
             
-            if ( (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame)){
-                if (isGround){
+            if (Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.wKey.wasPressedThisFrame)
+            {
+                // Выводим в консоль все флаги в момент нажатия Пробела
+                Debug.Log($"[ПРОБЕЛ НАЖАТ] isGround: {isGround} | isTouchWall: {isTouchWall} | isWallSlide: {isWallSlide}");
+
+                if (isGround)
+                {
+                    Debug.Log("-> Сработал ОБЫЧНЫЙ прыжок");
                     Jump();
                 }
                 else if (isTouchWall || isWallSlide)
                 {
+                    Debug.Log($"-> Сработал ОТСКОК ОТ СТЕНЫ с силой: {wallJumpPower}");
                     WallJump();
                 }
-                
+                else
+                {
+                    Debug.Log("-> Прыжок НЕ сработал (в воздухе и нет стены)");
+                }
             }
         }
     }

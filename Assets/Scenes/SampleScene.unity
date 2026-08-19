@@ -534,7 +534,7 @@ Transform:
   m_GameObject: {fileID: 830299646}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -721,7 +721,12 @@ MonoBehaviour:
   wallSlideSpeed: 2
   wallJumpPower: {x: 10, y: 12}
   wallCP: {fileID: 830299647}
-  wallCR: 0.2
+  wallCR: 0.5
+  wallStickCD: 0.3
+  wallJumpLD: 0.2
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1674056692
 GameObject:
   m_ObjectHideFlags: 0
